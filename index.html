@@ -2,65 +2,120 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Crypto Snake</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
         body {
             background-color: #000;
             color: white;
             font-family: 'Courier New', monospace;
             text-align: center;
-            margin: 0;
-            padding: 20px;
-            user-select: none;
-        }
-        #gameContainer {
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
+            justify-content: center;
+            user-select: none;
+            overflow: hidden;
         }
-        canvas {
+        #gameContainer {
+            margin: 0 auto;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+        #gameCanvas {
             background-color: #111;
             border: 2px solid #333;
             display: block;
+            width: 100%;
+            touch-action: none;
         }
         #score {
             font-size: 24px;
             color: #F7931A;
+            margin: 10px 0;
         }
-        #controls {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
+        #mobileControls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 5px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 300px;
+            margin: 15px auto 0;
         }
-        button {
-            background-color: #333;
+        .control-btn {
+            background-color: rgba(51, 51, 51, 0.7);
             color: white;
-            border: 1px solid #555;
-            padding: 8px 15px;
+            border: none;
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-family: inherit;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        button:hover {
-            background-color: #444;
+        .control-btn:active {
+            background-color: rgba(85, 85, 85, 0.7);
+        }
+        #upBtn {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        #leftBtn {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        #rightBtn {
+            grid-column: 3;
+            grid-row: 2;
+        }
+        #downBtn {
+            grid-column: 2;
+            grid-row: 3;
+        }
+        #swipeArea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: none;
+        }
+        @media (hover: hover) {
+            #mobileControls {
+                display: none;
+            }
+            #swipeArea {
+                display: block;
+            }
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <h1>🪙 Crypto Snake</h1>
-        <p>Collect ₿ coins! Use arrow keys or buttons below</p>
+        <p>Collect ₿ coins! Swipe or use buttons</p>
         <div id="score">Score: 0</div>
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <div id="controls">
-            <button id="upBtn">↑</button>
-            <div>
-                <button id="leftBtn">←</button>
-                <button id="rightBtn">→</button>
-            </div>
-            <button id="downBtn">↓</button>
+        <canvas id="gameCanvas"></canvas>
+        <div id="mobileControls">
+            <div id="upBtn" class="control-btn">↑</div>
+            <div id="leftBtn" class="control-btn">←</div>
+            <div id="rightBtn" class="control-btn">→</div>
+            <div id="downBtn" class="control-btn">↓</div>
         </div>
+        <div id="swipeArea"></div>
     </div>
     <script src="snake.js"></script>
 </body>
