@@ -1,17 +1,26 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Crypto Snake</title>
     <style>
-        body { background: #000; color: #fff; text-align: center; }
-        canvas { background: #111; margin-top: 50px; }
+        body {
+            background-color: #000;
+            color: white;
+            font-family: monospace;
+            text-align: center;
+        }
+        canvas {
+            background-color: #111;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
-    <h1>🐍 Crypto Snake</h1>
-    <canvas id="game" width="400" height="400"></canvas>
+    <h1>🪙 Crypto Snake</h1>
+    <p>Use arrow keys to play. Catch the Bitcoin icons!</p>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
     <script src="snake.js"></script>
 </body>
 </html>
