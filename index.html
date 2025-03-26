@@ -2,33 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Snake</title>
     <style>
         body {
             background-color: #000;
             color: white;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             text-align: center;
             margin: 0;
             padding: 20px;
+            user-select: none;
+        }
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
         canvas {
             background-color: #111;
-            display: block;
-            margin: 20px auto;
             border: 2px solid #333;
+            display: block;
         }
         #score {
             font-size: 24px;
-            margin: 10px;
+            color: #F7931A;
+        }
+        #controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover {
+            background-color: #444;
         }
     </style>
 </head>
 <body>
-    <h1>🪙 Crypto Snake</h1>
-    <p>Use arrow keys to play. Catch the Bitcoin icons!</p>
-    <div id="score">Score: 0</div>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="gameContainer">
+        <h1>🪙 Crypto Snake</h1>
+        <p>Collect ₿ coins! Use arrow keys or buttons below</p>
+        <div id="score">Score: 0</div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div id="controls">
+            <button id="upBtn">↑</button>
+            <div>
+                <button id="leftBtn">←</button>
+                <button id="rightBtn">→</button>
+            </div>
+            <button id="downBtn">↓</button>
+        </div>
+    </div>
     <script src="snake.js"></script>
 </body>
 </html>
