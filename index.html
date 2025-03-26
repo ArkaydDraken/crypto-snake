@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crypto Snake</title>
+    <title>Крипто Змейка</title>
     <style>
         * {
             margin: 0;
@@ -14,7 +14,7 @@
         body {
             background-color: #000;
             color: white;
-            font-family: 'Courier New', monospace;
+            font-family: 'Arial', sans-serif;
             text-align: center;
             height: 100vh;
             display: flex;
@@ -28,6 +28,7 @@
             width: 100%;
             max-width: 400px;
             position: relative;
+            padding: 10px;
         }
         #gameCanvas {
             background-color: #111;
@@ -84,38 +85,40 @@
             grid-column: 2;
             grid-row: 3;
         }
-        #swipeArea {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
+        #restartBtn {
             display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #00FF00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
         }
-        @media (hover: hover) {
-            #mobileControls {
-                display: none;
-            }
-            #swipeArea {
-                display: block;
-            }
+        #restartBtn:active {
+            background-color: #00CC00;
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
-        <h1>🪙 Crypto Snake</h1>
-        <p>Collect ₿ coins! Swipe or use buttons</p>
-        <div id="score">Score: 0</div>
+        <h1>🪙 Крипто Змейка</h1>
+        <p>Собирайте монеты ₿! Используйте кнопки или свайпы</p>
+        <div id="score">Счёт: 0</div>
         <canvas id="gameCanvas"></canvas>
+        <button id="restartBtn">Играть снова</button>
         <div id="mobileControls">
             <div id="upBtn" class="control-btn">↑</div>
             <div id="leftBtn" class="control-btn">←</div>
             <div id="rightBtn" class="control-btn">→</div>
             <div id="downBtn" class="control-btn">↓</div>
         </div>
-        <div id="swipeArea"></div>
     </div>
     <script src="snake.js"></script>
 </body>
