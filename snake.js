@@ -12,7 +12,8 @@ const COLORS = {
     food: '#F7931A',
     background: '#111',
     text: '#FFFFFF',
-    gameOver: '#FF0000'
+    gameOver: '#FF0000',
+    wall: '#333333'
 };
 
 // Состояние игры
@@ -104,6 +105,11 @@ function drawGame() {
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    // Отрисовка границ
+    ctx.strokeStyle = COLORS.wall;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    
     // Отрисовка еды (символ биткоина)
     ctx.fillStyle = COLORS.food;
     ctx.font = `${GRID_SIZE}px Arial`;
@@ -127,14 +133,20 @@ function drawGame() {
 function updateGame() {
     if (!isGameRunning) return;
     
-    // Создание новой головы
-    const head = {
+    // Создание новой головы с проверкой выхода за границы
+    let head = {
         x: snake[0].x + dx,
         y: snake[0].y + dy
     };
     
-    // Проверка столкновений
-    if (checkCollision(head)) {
+    // Прохождение сквозь стены
+    if (head.x < 0) head.x = canvas.width - GRID_SIZE;
+    if (head.x >= canvas.width) head.x = 0;
+    if (head.y < 0) head.y = canvas.height - GRID_SIZE;
+    if (head.y >= canvas.height) head.y = 0;
+    
+    // Проверка столкновения с собой
+    if (checkSelfCollision(head)) {
         gameOver();
         return;
     }
@@ -161,21 +173,13 @@ function updateGame() {
     }
 }
 
-// Проверка столкновений
-function checkCollision(head) {
-    // Столкновение со стенами
-    if (head.x < 0 || head.y < 0 || 
-        head.x >= canvas.width || head.y >= canvas.height) {
-        return true;
-    }
-    
-    // Столкновение с собой (пропускаем голову)
+// Проверка столкновения с собой
+function checkSelfCollision(head) {
     for (let i = 1; i < snake.length; i++) {
         if (head.x === snake[i].x && head.y === snake[i].y) {
             return true;
         }
     }
-    
     return false;
 }
 
@@ -202,7 +206,7 @@ function gameOver() {
 
 // Обновление счёта
 function updateScore() {
-    scoreElement.textContent = `Счёт: ${score}`;
+    scoreElement.textContent = score;
 }
 
 // Основной игровой цикл
