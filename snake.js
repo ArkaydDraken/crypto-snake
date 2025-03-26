@@ -1,8 +1,23 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
+const swipeArea = document.getElementById('swipeArea');
 
-// Game elements
+// Adjust canvas size for device pixel ratio
+function resizeCanvas() {
+    const size = Math.min(window.innerWidth - 40, 400);
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
+    canvas.width = size;
+    canvas.height = size;
+    
+    // Redraw game if it was running
+    if (isGameRunning) {
+        drawGame();
+    }
+}
+
+// Game settings
 const GRID_SIZE = 20;
 const INITIAL_SPEED = 150;
 const COLORS = {
@@ -23,59 +38,56 @@ let score = 0;
 let speed = INITIAL_SPEED;
 let gameInterval;
 let isGameRunning = false;
-let lastUpdateTime = 0;
-
-// Controls
-const upBtn = document.getElementById('upBtn');
-const downBtn = document.getElementById('downBtn');
-const leftBtn = document.getElementById('leftBtn');
-const rightBtn = document.getElementById('rightBtn');
+let touchStartX = 0;
+let touchStartY = 0;
 
 // Initialize game
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 initGame();
 
 function initGame() {
-    // Set up initial game state
+    // Clear existing interval
+    if (gameInterval) clearInterval(gameInterval);
+    
+    // Set initial snake position (centered)
+    const centerX = Math.floor(canvas.width / 2 / GRID_SIZE) * GRID_SIZE;
+    const centerY = Math.floor(canvas.height / 2 / GRID_SIZE) * GRID_SIZE;
+    
     snake = [
-        {x: 200, y: 200},
-        {x: 180, y: 200},
-        {x: 160, y: 200}
+        {x: centerX, y: centerY},
+        {x: centerX - GRID_SIZE, y: centerY},
+        {x: centerX - GRID_SIZE * 2, y: centerY}
     ];
+    
     generateFood();
     dx = GRID_SIZE;
     dy = 0;
     score = 0;
     speed = INITIAL_SPEED;
     isGameRunning = true;
-    lastUpdateTime = 0;
     
-    // Clear any existing interval
-    if (gameInterval) clearInterval(gameInterval);
-    
-    // Start game loop
-    gameInterval = setInterval(gameLoop, speed);
-    
-    // Update score display
     updateScore();
-    
-    // Draw initial state
+    gameInterval = setInterval(gameLoop, speed);
     drawGame();
 }
 
 function generateFood() {
-    const cols = canvas.width / GRID_SIZE;
-    const rows = canvas.height / GRID_SIZE;
+    const cols = Math.floor(canvas.width / GRID_SIZE);
+    const rows = Math.floor(canvas.height / GRID_SIZE);
     
     let newFood;
     let isFoodValid = false;
+    let attempts = 0;
+    const maxAttempts = 100;
     
-    while (!isFoodValid) {
+    while (!isFoodValid && attempts < maxAttempts) {
+        attempts++;
         newFood = {
             x: Math.floor(Math.random() * cols) * GRID_SIZE,
             y: Math.floor(Math.random() * rows) * GRID_SIZE
         };
         
-        // Check if food spawns on snake
         isFoodValid = !snake.some(segment => 
             segment.x === newFood.x && segment.y === newFood.y
         );
@@ -205,9 +217,72 @@ function changeDirection(newDx, newDy) {
     dy = newDy;
 }
 
-// Event listeners
+// Touch controls
+swipeArea.addEventListener('touchstart', handleTouchStart, {passive: false});
+swipeArea.addEventListener('touchmove', handleTouchMove, {passive: false});
+
+function handleTouchStart(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    e.preventDefault();
+}
+
+function handleTouchMove(e) {
+    if (!isGameRunning) {
+        // Check if tap was on restart button
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const rect = canvas.getBoundingClientRect();
+        const x = touchX - rect.left;
+        const y = touchY - rect.top;
+        
+        if (x >= canvas.width/2 - 60 && x <= canvas.width/2 + 60 &&
+            y >= canvas.height/2 + 40 && y <= canvas.height/2 + 80) {
+            initGame();
+        }
+        return;
+    }
+    
+    const touchEndX = e.touches[0].clientX;
+    const touchEndY = e.touches[0].clientY;
+    
+    const dx = touchEndX - touchStartX;
+    const dy = touchEndY - touchStartY;
+    
+    // Determine primary direction
+    if (Math.abs(dx) > Math.abs(dy)) {
+        // Horizontal swipe
+        if (dx > 0) {
+            changeDirection(GRID_SIZE, 0); // Right
+        } else {
+            changeDirection(-GRID_SIZE, 0); // Left
+        }
+    } else {
+        // Vertical swipe
+        if (dy > 0) {
+            changeDirection(0, GRID_SIZE); // Down
+        } else {
+            changeDirection(0, -GRID_SIZE); // Up
+        }
+    }
+    
+    e.preventDefault();
+}
+
+// Button controls
+document.getElementById('upBtn').addEventListener('click', () => changeDirection(0, -GRID_SIZE));
+document.getElementById('downBtn').addEventListener('click', () => changeDirection(0, GRID_SIZE));
+document.getElementById('leftBtn').addEventListener('click', () => changeDirection(-GRID_SIZE, 0));
+document.getElementById('rightBtn').addEventListener('click', () => changeDirection(GRID_SIZE, 0));
+
+// Keyboard controls
 document.addEventListener('keydown', e => {
-    if (!isGameRunning) return;
+    if (!isGameRunning) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            initGame();
+        }
+        return;
+    }
     
     switch(e.key) {
         case 'ArrowUp':
@@ -225,20 +300,13 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// Mobile controls
-upBtn.addEventListener('click', () => changeDirection(0, -GRID_SIZE));
-downBtn.addEventListener('click', () => changeDirection(0, GRID_SIZE));
-leftBtn.addEventListener('click', () => changeDirection(-GRID_SIZE, 0));
-rightBtn.addEventListener('click', () => changeDirection(GRID_SIZE, 0));
-
-// Handle restart click
+// Handle restart click on canvas
 canvas.addEventListener('click', (e) => {
     if (!isGameRunning) {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         
-        // Check if click was on restart button
         if (x >= canvas.width/2 - 60 && x <= canvas.width/2 + 60 &&
             y >= canvas.height/2 + 40 && y <= canvas.height/2 + 80) {
             initGame();
