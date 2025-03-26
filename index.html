@@ -37,20 +37,35 @@
             width: 100%;
             touch-action: none;
         }
+        #scoreContainer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        #scoreIcon {
+            font-size: 24px;
+            margin-right: 8px;
+            color: #F7931A;
+        }
         #score {
             font-size: 24px;
-            color: #F7931A;
-            margin: 10px 0;
+            font-weight: bold;
+            color: #FFFFFF;
+            background: linear-gradient(135deg, #F7931A, #FF9500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 5px rgba(247, 147, 26, 0.3);
         }
         #mobileControls {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             grid-template-rows: 1fr 1fr 1fr;
-            gap: 5px;
-            margin-top: 15px;
+            gap: 3px;
+            margin-top: 10px;
             width: 100%;
-            max-width: 300px;
-            margin: 15px auto 0;
+            max-width: 200px;
+            margin: 10px auto 0;
         }
         .control-btn {
             background-color: rgba(51, 51, 51, 0.7);
@@ -58,7 +73,7 @@
             border: none;
             border-radius: 50%;
             aspect-ratio: 1/1;
-            font-size: 24px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -91,26 +106,30 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #00FF00;
+            background: linear-gradient(135deg, #00FF00, #00CC00);
             color: #000;
             border: none;
             padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 18px;
+            border-radius: 20px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             z-index: 100;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
         #restartBtn:active {
-            background-color: #00CC00;
+            transform: translate(-50%, -50%) scale(0.95);
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <h1>🪙 Крипто Змейка</h1>
-        <p>Собирайте монеты ₿! Используйте кнопки или свайпы</p>
-        <div id="score">Счёт: 0</div>
+        <p>Собирайте монеты ₿! Проходите сквозь стены!</p>
+        <div id="scoreContainer">
+            <div id="scoreIcon">₿</div>
+            <div id="score">0</div>
+        </div>
         <canvas id="gameCanvas"></canvas>
         <button id="restartBtn">Играть снова</button>
         <div id="mobileControls">
